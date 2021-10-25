@@ -1,0 +1,18 @@
+default: |
+  <b>🕸 This bot is dead.</b>
+
+  Due to various reasons, we are currently unable to keep this bot running properly.
+  As a result, it was disabled.
+
+  <i>❔ Will it ever come back?</i>
+  We can't tell yet. Maybe we find the time to revive it. But until then, please have a seek other alternatives.
+  
+  <i>❔ Why don't you delete it then?</i>
+  a) To reduce the risk of scammers taking the name and misuse it
+  b) We might want to revive it in the future
+
+  <i>❔ Can I have its username?</i>
+  Probably not. But you could try to shoot us a message at @wjclub_support. But please be aware: You might have to wait up to a few months for a reply if we are busy.
+
+callback_query_alert_text: This bot is dead. Send /start for more info.
+inline_query_alert_text: 🕸 This bot is dead. Click for more info.
