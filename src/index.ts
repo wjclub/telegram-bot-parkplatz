@@ -1,8 +1,28 @@
 import Koa from "koa";
 import koaBody from "koa-body";
+// @ts-ignore
+import Meter from "@uswitch/koa-prometheus";
 import { Bot, Context as BaseContext, webhookCallback } from "grammy";
 import { limit } from "@grammyjs/ratelimiter";
 import { I18n, I18nContext } from "@grammyjs/i18n";
+
+// Set up metrics collection
+const meters = Meter(
+  [
+    {
+      name: "root_get_requests",
+      help: "How many times a GET request went to /",
+      type: "Counter",
+    },
+    {
+      name: "parked_bot_update",
+      help: "How many times a parked bot received an update",
+      type: "Counter",
+      labelNames: [{ key: "method" }],
+    },
+  ],
+  { loadDefaults: false }
+);
 
 interface ContextWithI18N extends BaseContext {
   readonly i18n: I18nContext;
@@ -45,21 +65,26 @@ const defaultOptions = {
 };
 
 // Handle commands
-bot.command("start", async (ctx) =>
-  ctx.reply(ctx.i18n.t("default"), defaultOptions)
-);
-bot.command("help", async (ctx) =>
-  ctx.reply(ctx.i18n.t("default"), defaultOptions)
-);
-bot.command("settings", async (ctx) =>
-  ctx.reply(ctx.i18n.t("default"), defaultOptions)
-);
+bot.command("start", async (ctx) => {
+  ctx.reply(ctx.i18n.t("default"), defaultOptions);
+  meters.parkedBotUpdate.labels("/start").inc(1);
+});
+bot.command("help", async (ctx) => {
+  ctx.reply(ctx.i18n.t("default"), defaultOptions);
+  meters.parkedBotUpdate.labels("/help").inc(1);
+});
+bot.command("settings", async (ctx) => {
+  ctx.reply(ctx.i18n.t("default"), defaultOptions);
+  meters.parkedBotUpdate.labels("/settings").inc(1);
+});
 
 // Handle other messages
 bot.on("message", async (ctx) => {
-  if (ctx.chat.type === "private")
-    ctx.reply(ctx.i18n.t("default"), defaultOptions);
   // Don't answer to non-command messages in any other chat than private to avoid spamming.
+  if (ctx.chat.type === "private") {
+    ctx.reply(ctx.i18n.t("default"), defaultOptions);
+    meters.parkedBotUpdate.labels("generic_message").inc(1);
+  }
 });
 
 // Handle Callback queries (presses of inline buttons)
@@ -69,20 +94,32 @@ bot.on("callback_query:data", async (ctx) => {
     show_alert: true,
     cache_time: 5,
   });
+
+  meters.parkedBotUpdate.labels("callback_query").inc(1);
 });
 
 bot.on("inline_query", async (ctx) => {
-  ctx.answerInlineQuery([], {
+  await ctx.answerInlineQuery([], {
     cache_time: 5,
     is_personal: false,
     switch_pm_parameter: "from_inline_query",
     switch_pm_text: ctx.i18n.t("inline_query_alert_text"),
   });
+  meters.parkedBotUpdate.labels("inline_query").inc(1);
 });
 
 // Set up webserver
 const app = new Koa();
 app.use(koaBody());
+
+// Expose a metrics collection endpoint
+app.use(async (ctx, next) => {
+  if (ctx.path === "/supersecretmetrics") {
+    ctx.body = meters.print();
+  } else {
+    return next();
+  }
+});
 
 // Workaround: Tell telegram that we are indeed returning JSON, so that it executes the returned api method.
 app.use(async (ctx, next) => {
@@ -94,6 +131,7 @@ app.use(async (ctx, next) => {
   if (ctx.method.toLocaleLowerCase() === "get") {
     ctx.body =
       '{"hint": "You should not be here. This place is not for humans."}';
+    meters.rootGetRequests.inc(1);
   } else {
     return next();
   }
@@ -106,5 +144,5 @@ app.use(webhookCallback(bot, "koa"));
 const port = Number(process.env.PORT ?? 3000);
 const hostname = process.env.HOST ?? "127.0.0.1";
 app.listen(port, hostname, () => {
-  console.log(`Listening on ${hostname}:${port}...`);
+  console.log(`Listening on http://${hostname}:${port}`);
 });
