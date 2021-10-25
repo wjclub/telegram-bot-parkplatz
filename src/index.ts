@@ -3,6 +3,7 @@ import koaBody from "koa-body";
 import { Bot, Context as BaseContext, webhookCallback } from "grammy";
 import { limit } from "@grammyjs/ratelimiter";
 import { I18n, I18nContext } from "@grammyjs/i18n";
+import { nextTick } from "process";
 
 interface ContextWithI18N extends BaseContext {
   readonly i18n: I18nContext;
@@ -72,13 +73,13 @@ bot.on("callback_query:data", async (ctx) => {
 });
 
 bot.on("inline_query", async (ctx) => {
-    ctx.answerInlineQuery([], {
-        cache_time: 5,
-        is_personal: false,
-        switch_pm_parameter: "from_inline_query",
-        switch_pm_text: ctx.i18n.t("inline_query_alert_text")
-    })
-})
+  ctx.answerInlineQuery([], {
+    cache_time: 5,
+    is_personal: false,
+    switch_pm_parameter: "from_inline_query",
+    switch_pm_text: ctx.i18n.t("inline_query_alert_text"),
+  });
+});
 
 // Set up webserver
 const app = new Koa();
@@ -88,6 +89,15 @@ app.use(koaBody());
 app.use(async (ctx, next) => {
   ctx.set("Content-Type", "application/json");
   await next();
+});
+
+app.use(async (ctx, next) => {
+  if (ctx.method.toLocaleLowerCase() === "get") {
+    ctx.body =
+      '{"hint": "You should not be here. This place is not for humans."}';
+  } else {
+    return next();
+  }
 });
 
 // Route web request to the bot webhook callback
