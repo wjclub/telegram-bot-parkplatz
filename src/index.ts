@@ -3,7 +3,6 @@ import koaBody from "koa-body";
 import { Bot, Context as BaseContext, webhookCallback } from "grammy";
 import { limit } from "@grammyjs/ratelimiter";
 import { I18n, I18nContext } from "@grammyjs/i18n";
-import { nextTick } from "process";
 
 interface ContextWithI18N extends BaseContext {
   readonly i18n: I18nContext;
