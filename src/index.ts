@@ -69,14 +69,17 @@ const defaultOptions = {
 // Handle commands
 bot.command("start", async (ctx) => {
   ctx.reply(ctx.i18n.t("default"), defaultOptions);
+  console.log("Handled command /start")
   meters.parkedBotUpdate.labels("/start").inc(1);
 });
 bot.command("help", async (ctx) => {
   ctx.reply(ctx.i18n.t("default"), defaultOptions);
+  console.log("Handled command /help")
   meters.parkedBotUpdate.labels("/help").inc(1);
 });
 bot.command("settings", async (ctx) => {
   ctx.reply(ctx.i18n.t("default"), defaultOptions);
+  console.log("Handled command /settings")
   meters.parkedBotUpdate.labels("/settings").inc(1);
 });
 
@@ -85,6 +88,7 @@ bot.on("message", async (ctx) => {
   // Don't answer to non-command messages in any other chat than private to avoid spamming.
   if (ctx.chat.type === "private") {
     ctx.reply(ctx.i18n.t("default"), defaultOptions);
+    console.log("Handled generic message in private chat")
     meters.parkedBotUpdate.labels("generic_message").inc(1);
   }
 });
@@ -97,6 +101,7 @@ bot.on("callback_query:data", async (ctx) => {
     cache_time: 5,
   });
 
+  console.log("Handled callback query")
   meters.parkedBotUpdate.labels("callback_query").inc(1);
 });
 
@@ -109,6 +114,7 @@ bot.on("inline_query", async (ctx) => {
       start_parameter: "from_inline_query",
     },
   });
+  console.log("Handled inline query")
   meters.parkedBotUpdate.labels("inline_query").inc(1);
 });
 
