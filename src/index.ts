@@ -40,6 +40,8 @@ const bot = new Bot<ContextWithI18N>("we-have-no-token", {
     username: "botbot",
     language_code: "bo",
     last_name: "bot",
+    can_connect_to_business: false,
+    has_main_web_app: false
   },
   client: {
     // Always send the reply via the webhook response, since we don't know all bot's tokens:
@@ -102,8 +104,10 @@ bot.on("inline_query", async (ctx) => {
   await ctx.answerInlineQuery([], {
     cache_time: 5,
     is_personal: false,
-    switch_pm_parameter: "from_inline_query",
-    switch_pm_text: ctx.i18n.t("inline_query_alert_text"),
+    button: {
+      text: ctx.i18n.t("inline_query_alert_text"),
+      start_parameter: "from_inline_query",
+    },
   });
   meters.parkedBotUpdate.labels("inline_query").inc(1);
 });
@@ -142,7 +146,7 @@ app.use(webhookCallback(bot, "koa"));
 
 // Start the webserver
 const port = Number(process.env.PORT ?? 3000);
-const hostname = process.env.HOST ?? "127.0.0.1";
+const hostname = process.env.HOST ?? "0.0.0.0";
 app.listen(port, hostname, () => {
   console.log(`Listening on http://${hostname}:${port}`);
 });
