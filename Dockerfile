@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM docker.io/node:16-alpine
+FROM docker.io/node:24-alpine
 
 # Install dependencies first, so that they can be cached
 WORKDIR /app
