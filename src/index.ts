@@ -4,7 +4,7 @@ import koaBody from "koa-body";
 import Meter from "@uswitch/koa-prometheus";
 import { Bot, Context as BaseContext, webhookCallback } from "grammy";
 import { limit } from "@grammyjs/ratelimiter";
-import { I18n, I18nContext } from "@grammyjs/i18n";
+import { I18n, I18nFlavor } from "@grammyjs/i18n";
 
 // Set up metrics collection
 const meters = Meter(
@@ -24,9 +24,7 @@ const meters = Meter(
   { loadDefaults: false }
 );
 
-interface ContextWithI18N extends BaseContext {
-  readonly i18n: I18nContext;
-}
+type ContextWithI18N = BaseContext & I18nFlavor;
 
 const bot = new Bot<ContextWithI18N>("we-have-no-token", {
   // Write down some generic botInfo to avoid making a getMe call, as we want to answer for multiple bots
@@ -41,7 +39,9 @@ const bot = new Bot<ContextWithI18N>("we-have-no-token", {
     language_code: "bo",
     last_name: "bot",
     can_connect_to_business: false,
-    has_main_web_app: false
+    has_main_web_app: false,
+    has_topics_enabled: false,
+    allows_users_to_create_topics: false
   },
   client: {
     // Always send the reply via the webhook response, since we don't know all bot's tokens:
@@ -50,9 +50,8 @@ const bot = new Bot<ContextWithI18N>("we-have-no-token", {
 });
 
 const i18n = new I18n({
-  defaultLanguageOnMissing: true, // implies allowMissing = true
   directory: "locales",
-  defaultLanguage: "en",
+  defaultLocale: "en",
   useSession: false,
 });
 
@@ -68,17 +67,17 @@ const defaultOptions = {
 
 // Handle commands
 bot.command("start", async (ctx) => {
-  ctx.reply(ctx.i18n.t("default"), defaultOptions);
+  ctx.reply(ctx.t("default"), defaultOptions);
   console.log("Handled command /start")
   meters.parkedBotUpdate.labels("/start").inc(1);
 });
 bot.command("help", async (ctx) => {
-  ctx.reply(ctx.i18n.t("default"), defaultOptions);
+  ctx.reply(ctx.t("default"), defaultOptions);
   console.log("Handled command /help")
   meters.parkedBotUpdate.labels("/help").inc(1);
 });
 bot.command("settings", async (ctx) => {
-  ctx.reply(ctx.i18n.t("default"), defaultOptions);
+  ctx.reply(ctx.t("default"), defaultOptions);
   console.log("Handled command /settings")
   meters.parkedBotUpdate.labels("/settings").inc(1);
 });
@@ -87,7 +86,7 @@ bot.command("settings", async (ctx) => {
 bot.on("message", async (ctx) => {
   // Don't answer to non-command messages in any other chat than private to avoid spamming.
   if (ctx.chat.type === "private") {
-    ctx.reply(ctx.i18n.t("default"), defaultOptions);
+    ctx.reply(ctx.t("default"), defaultOptions);
     console.log("Handled generic message in private chat")
     meters.parkedBotUpdate.labels("generic_message").inc(1);
   }
@@ -96,7 +95,7 @@ bot.on("message", async (ctx) => {
 // Handle Callback queries (presses of inline buttons)
 bot.on("callback_query:data", async (ctx) => {
   await ctx.answerCallbackQuery({
-    text: ctx.i18n.t("callback_query_alert_text"),
+    text: ctx.t("callback_query_alert_text"),
     show_alert: true,
     cache_time: 5,
   });
@@ -110,7 +109,7 @@ bot.on("inline_query", async (ctx) => {
     cache_time: 5,
     is_personal: false,
     button: {
-      text: ctx.i18n.t("inline_query_alert_text"),
+      text: ctx.t("inline_query_alert_text"),
       start_parameter: "from_inline_query",
     },
   });
