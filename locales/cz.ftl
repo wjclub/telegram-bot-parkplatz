@@ -1,4 +1,4 @@
-default: |
+default =
   <b>🕸 这个机器人已经死亡。</b>
 
   由于各种原因，我们目前无法保持这个机器人的正常运行。
@@ -16,5 +16,5 @@ default: |
 
   <i>这段文字是用DeepL 翻译的，这样你就知道这个机器人是怎么回事了。WJClub只说英语和德语，无法用其他语言帮助你。</i>
 
-callback_query_alert_text: 这个机器人已经死了。发送/start以获取更多信息。
-inline_query_alert_text: 🕸 This bot is dead. 点击获取更多信息。
+callback_query_alert_text = 这个机器人已经死了。发送/start以获取更多信息。
+inline_query_alert_text = 🕸 This bot is dead. 点击获取更多信息。

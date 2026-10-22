@@ -49,13 +49,13 @@ const bot = new Bot<ContextWithI18N>("we-have-no-token", {
   },
 });
 
-const i18n = new I18n({
+const i18n = new I18n<ContextWithI18N>({
   directory: "locales",
   defaultLocale: "en",
   useSession: false,
 });
 
-bot.use(i18n.middleware());
+bot.use(i18n);
 
 // Apply a rate-limit of max 1 req/2.5 seconds on incoming updates
 bot.use(limit({ timeFrame: 2500 }));

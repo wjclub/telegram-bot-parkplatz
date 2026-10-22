@@ -1,4 +1,4 @@
-default: |
+default =
   <b>🕸 Tento bot je mrtvý.</b>
 
   Z různých důvodů nejsme v současné době schopni udržet tohoto bota v řádném provozu.
@@ -16,5 +16,5 @@ default: |
 
   <i>Tento text byl přeložen pomocí DeepL, abyste věděli, jak to s tímto botem je. WJClub hovoří pouze anglicky a německy a v jiných jazycích vám nemůže pomoci.</i>
 
-callback_query_alert_text: Tento bot je mrtvý. Pro více informací pošlete /start.
-inline_query_alert_text: 🕸 Tento bot je mrtvý. Klikněte pro více informací.
+callback_query_alert_text = Tento bot je mrtvý. Pro více informací pošlete /start.
+inline_query_alert_text = 🕸 Tento bot je mrtvý. Klikněte pro více informací.

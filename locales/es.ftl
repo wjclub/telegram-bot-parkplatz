@@ -1,4 +1,4 @@
-default: |
+default =
   <b>🕸 Este bot está muerto.</b>
 
   Debido a varias razones, actualmente no podemos mantener este bot funcionando correctamente.
@@ -16,5 +16,5 @@ default: |
 
   <i>Este texto fue traducido usando DeepL para que sepas lo que pasa con este bot. WJClub sólo habla inglés y alemán y no puede ayudarte en otros idiomas.</i>
 
-callback_query_alert_text: Este bot está muerto. Envía /start para obtener más información.
-inline_query_alert_text: 🕸 Este bot está muerto. Haga clic para obtener más información.
+callback_query_alert_text = Este bot está muerto. Envía /start para obtener más información.
+inline_query_alert_text = 🕸 Este bot está muerto. Haga clic para obtener más información.

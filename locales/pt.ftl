@@ -1,4 +1,4 @@
-default: |
+default =
   <b>🕸 Este bot está morto.</b>
 
   Devido a várias razões, somos actualmente incapazes de manter este robot a funcionar correctamente.
@@ -17,4 +17,4 @@ default: |
   <i>Este texto foi traduzido usando DeepL para que saiba o que se passa com este bot. O WJClub só fala inglês e alemão e não o pode ajudar em outras línguas.</i>
 
 calllback_query_alert_text: Este robot está morto. Enviar / iniciar para mais informações.
-inline_query_alert_text: 🕸 Este robot está morto. Clique para mais informações.
+inline_query_alert_text = 🕸 Este robot está morto. Clique para mais informações.

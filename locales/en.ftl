@@ -1,4 +1,4 @@
-default: |
+default =
   <b>🕸 This bot is dead.</b>
 
   Due to various reasons, we are currently unable to keep this bot running properly.
@@ -14,5 +14,5 @@ default: |
   <i>❔ Can I have its username?</i>
   Probably not. But you could try to shoot us a message at @wjclub_support. But please be aware: You might have to wait up to a few months for a reply if we are busy.
 
-callback_query_alert_text: This bot is dead. Send /start for more info.
-inline_query_alert_text: 🕸 This bot is dead. Click for more info.
+callback_query_alert_text = This bot is dead. Send /start for more info.
+inline_query_alert_text =  🕸 This bot is dead. Click for more info.
